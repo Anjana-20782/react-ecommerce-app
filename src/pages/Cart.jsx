@@ -1,143 +1,457 @@
 // src/pages/Cart.jsx
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
+import { AiOutlineMinus, AiOutlinePlus, AiOutlineDelete } from "react-icons/ai";
 
 export default function Cart() {
-  const { cart, removeFromCart } = useContext(CartContext);
+  const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
+  const [quantities, setQuantities] = useState({});
 
   if (cart.length === 0)
     return (
-      <div className="container">
-        <h1 className="page-title">Your Cart is Empty</h1>
-        <div className="text-center py-8">
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🛒</div>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
-            Your cart is empty. Start shopping to add items to your cart!
-          </p>
-        </div>
+      <div style={{
+        minHeight: '60vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+        borderRadius: '20px',
+        margin: '2rem auto',
+        maxWidth: '800px',
+        color: 'white',
+        textAlign: 'center',
+        padding: '3rem'
+      }}>
+        <div style={{ fontSize: '6rem', marginBottom: '1.5rem' }}>🛒</div>
+        <h1 style={{
+          fontSize: '2.5rem',
+          fontWeight: '700',
+          marginBottom: '1rem',
+          background: 'linear-gradient(45deg, #ffffff, #f0f0f0)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          Your Cart is Empty
+        </h1>
+        <p style={{
+          fontSize: '1.2rem',
+          opacity: '0.9',
+          marginBottom: '2rem',
+          maxWidth: '400px'
+        }}>
+          Looks like you haven't added any items to your cart yet.
+          Start shopping to fill it up with amazing products!
+        </p>
+        <button style={{
+          background: 'white',
+          color: '#1e3c72',
+          border: 'none',
+          padding: '1rem 2rem',
+          borderRadius: '50px',
+          fontSize: '1.1rem',
+          fontWeight: '600',
+          cursor: 'pointer',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+          transition: 'all 0.3s ease'
+        }}
+        onMouseOver={(e) => {
+          e.target.style.transform = 'translateY(-2px)';
+          e.target.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
+        }}
+        onMouseOut={(e) => {
+          e.target.style.transform = 'translateY(0)';
+          e.target.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+        }}>
+          Start Shopping
+        </button>
       </div>
     );
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // Calculate totals
+  const subtotal = cart.reduce((sum, item) => sum + item.price * (quantities[item.id] || item.quantity), 0);
+  const shipping = subtotal > 500 ? 0 : 50;
+  const tax = subtotal * 0.18; // 18% GST
+  const total = subtotal + shipping + tax;
+
+  const updateItemQuantity = (id, newQuantity) => {
+    if (newQuantity <= 0) {
+      removeFromCart(id);
+      return;
+    }
+    setQuantities(prev => ({ ...prev, [id]: newQuantity }));
+    updateQuantity?.(id, newQuantity);
+  };
 
   return (
-    <div className="container">
-      <h1 className="page-title">Your Cart ({cart.length} items)</h1>
-
-      <div style={{ display: 'grid', gap: '1rem', marginBottom: '2rem' }}>
-        {cart.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              background: 'white',
-              borderRadius: '12px',
-              padding: '1.5rem',
-              boxShadow: 'var(--shadow)',
-              border: '1px solid var(--border-color)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '1rem'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
-              <img
-                src={item.thumbnail}
-                alt={item.title}
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '8px',
-                  objectFit: 'cover'
-                }}
-              />
-              <div>
-                <h3 style={{
-                  fontSize: '1.1rem',
-                  fontWeight: '600',
-                  color: 'var(--text-primary)',
-                  marginBottom: '0.5rem'
-                }}>
-                  {item.title}
-                </h3>
-                <p style={{
-                  fontSize: '1.1rem',
-                  fontWeight: '700',
-                  color: 'var(--flipkart-blue)'
-                }}>
-                  ₹{item.price} × {item.quantity} = ₹{(item.price * item.quantity).toFixed(2)}
-                </p>
-              </div>
-            </div>
-            <button
-              style={{
-                background: '#dc3545',
-                color: 'white',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'background 0.2s ease'
-              }}
-              onMouseOver={(e) => e.target.style.background = '#c82333'}
-              onMouseOut={(e) => e.target.style.background = '#dc3545'}
-              onClick={() => removeFromCart(item.id)}
-            >
-              Remove
-            </button>
-          </div>
-        ))}
+    <div style={{
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '2rem 1rem',
+      background: '#f8f9fa'
+    }}>
+      <div style={{
+        background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+        color: 'white',
+        padding: '2rem',
+        borderRadius: '15px',
+        textAlign: 'center',
+        marginBottom: '2rem',
+        boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)'
+      }}>
+        <h1 style={{
+          fontSize: '2.5rem',
+          fontWeight: '700',
+          margin: '0',
+          background: 'linear-gradient(45deg, #ffffff, #f0f0f0)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          Shopping Cart
+        </h1>
+        <p style={{ fontSize: '1.1rem', opacity: '0.9', margin: '0.5rem 0 0 0' }}>
+          {cart.length} item{cart.length !== 1 ? 's' : ''} in your cart
+        </p>
       </div>
 
       <div style={{
-        background: 'white',
-        borderRadius: '12px',
-        padding: '2rem',
-        boxShadow: 'var(--shadow)',
-        border: '1px solid var(--border-color)',
-        textAlign: 'center'
+        display: 'grid',
+        gridTemplateColumns: '1fr 350px',
+        gap: '2rem',
+        alignItems: 'start'
       }}>
-        <h2 style={{
-          fontSize: '1.5rem',
-          fontWeight: '700',
-          color: 'var(--text-primary)',
-          marginBottom: '1rem'
-        }}>
-          Order Summary
-        </h2>
-        <div style={{
-          fontSize: '1.3rem',
-          fontWeight: '700',
-          color: 'var(--flipkart-blue)',
-          marginBottom: '1.5rem'
-        }}>
-          Total: ₹{total.toFixed(2)}
+
+        {/* Cart Items */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {cart.map((item) => {
+            const quantity = quantities[item.id] || item.quantity;
+            const itemTotal = item.price * quantity;
+
+            return (
+              <div
+                key={item.id}
+                style={{
+                  background: 'white',
+                  borderRadius: '15px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                  border: '1px solid #e9ecef',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.12)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
+                }}
+              >
+                <div style={{
+                  display: 'flex',
+                  padding: '1.5rem',
+                  gap: '1.5rem',
+                  alignItems: 'center'
+                }}>
+                  {/* Product Image */}
+                  <div style={{
+                    position: 'relative',
+                    width: '100px',
+                    height: '100px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    background: '#f8f9fa',
+                    flexShrink: 0
+                  }}>
+                    <img
+                      src={item.thumbnail}
+                      alt={item.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/100x100/f8f9fa/6c757d?text=No+Image';
+                      }}
+                    />
+                  </div>
+
+                  {/* Product Details */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h3 style={{
+                      fontSize: '1.2rem',
+                      fontWeight: '600',
+                      color: '#1a1a1a',
+                      margin: '0 0 0.5rem 0',
+                      lineHeight: '1.4',
+                      display: '-webkit-box',
+                      WebkitLineClamp: '2',
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {item.title}
+                    </h3>
+
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1rem',
+                      marginBottom: '1rem'
+                    }}>
+                      <span style={{
+                        fontSize: '1.3rem',
+                        fontWeight: '700',
+                        color: '#1e3c72'
+                      }}>
+                        ₹{item.price.toLocaleString()}
+                      </span>
+                    </div>
+
+                    {/* Quantity Controls */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}>
+                      <button
+                        onClick={() => updateItemQuantity(item.id, quantity - 1)}
+                        style={{
+                          background: '#f8f9fa',
+                          border: '1px solid #dee2e6',
+                          borderRadius: '8px',
+                          width: '32px',
+                          height: '32px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseOver={(e) => e.target.style.background = '#e9ecef'}
+                        onMouseOut={(e) => e.target.style.background = '#f8f9fa'}
+                      >
+                        <AiOutlineMinus size={14} />
+                      </button>
+
+                      <span style={{
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        minWidth: '40px',
+                        textAlign: 'center'
+                      }}>
+                        {quantity}
+                      </span>
+
+                      <button
+                        onClick={() => updateItemQuantity(item.id, quantity + 1)}
+                        style={{
+                          background: '#f8f9fa',
+                          border: '1px solid #dee2e6',
+                          borderRadius: '8px',
+                          width: '32px',
+                          height: '32px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseOver={(e) => e.target.style.background = '#e9ecef'}
+                        onMouseOut={(e) => e.target.style.background = '#f8f9fa'}
+                      >
+                        <AiOutlinePlus size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Price and Remove */}
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: '1rem'
+                  }}>
+                    <div style={{
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      color: '#1e3c72',
+                      textAlign: 'right'
+                    }}>
+                      ₹{itemTotal.toLocaleString()}
+                    </div>
+
+                    <button
+                      onClick={() => removeFromCart(item.id)}
+                      style={{
+                        background: 'linear-gradient(135deg, #ff4757, #ff3838)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '0.5rem 1rem',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.transform = 'scale(1.05)';
+                        e.target.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.transform = 'scale(1)';
+                        e.target.style.boxShadow = 'none';
+                      }}
+                    >
+                      <AiOutlineDelete size={16} />
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <button
-          style={{
-            background: 'linear-gradient(135deg, var(--flipkart-orange) 0%, #ff8c42 100%)',
-            color: 'white',
-            border: 'none',
-            padding: '1rem 2rem',
-            borderRadius: '8px',
-            fontSize: '1.1rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            boxShadow: '0 4px 15px rgba(255, 159, 67, 0.3)',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseOver={(e) => {
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 6px 20px rgba(255, 159, 67, 0.4)';
-          }}
-          onMouseOut={(e) => {
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 4px 15px rgba(255, 159, 67, 0.3)';
-          }}
-        >
-          Proceed to Checkout
-        </button>
+
+        {/* Order Summary */}
+        <div style={{
+          background: 'white',
+          borderRadius: '15px',
+          padding: '2rem',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+          border: '1px solid #e9ecef',
+          position: 'sticky',
+          top: '2rem',
+          height: 'fit-content'
+        }}>
+          <h2 style={{
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            color: '#1a1a1a',
+            margin: '0 0 1.5rem 0',
+            textAlign: 'center',
+            borderBottom: '2px solid #1e3c72',
+            paddingBottom: '1rem'
+          }}>
+            Order Summary
+          </h2>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ color: '#6c757d' }}>Subtotal ({cart.length} items)</span>
+              <span style={{ fontWeight: '600' }}>₹{subtotal.toLocaleString()}</span>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ color: '#6c757d' }}>Shipping</span>
+              <span style={{
+                fontWeight: '600',
+                color: shipping === 0 ? '#28a745' : '#6c757d'
+              }}>
+                {shipping === 0 ? 'FREE' : `₹${shipping}`}
+              </span>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ color: '#6c757d' }}>Tax (GST 18%)</span>
+              <span style={{ fontWeight: '600' }}>₹{tax.toFixed(0)}</span>
+            </div>
+
+            <hr style={{ border: 'none', borderTop: '1px solid #e9ecef', margin: '0.5rem 0' }} />
+
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '1.2rem',
+              fontWeight: '700',
+              color: '#667eea'
+            }}>
+              <span>Total</span>
+              <span>₹{total.toFixed(0).toLocaleString()}</span>
+            </div>
+
+            {subtotal < 500 && (
+              <div style={{
+                background: '#fff3cd',
+                border: '1px solid #ffeaa7',
+                borderRadius: '8px',
+                padding: '1rem',
+                textAlign: 'center',
+                fontSize: '0.9rem',
+                color: '#856404'
+              }}>
+                Add ₹{(500 - subtotal).toLocaleString()} more for FREE shipping!
+              </div>
+            )}
+
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '1.2rem',
+                fontSize: '1.1rem',
+                fontWeight: '700',
+                cursor: 'pointer',
+                marginTop: '1rem',
+                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                transition: 'all 0.3s ease',
+                width: '100%'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.6)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+              }}
+            >
+              Proceed to Checkout
+            </button>
+
+            <div style={{
+              textAlign: 'center',
+              marginTop: '1rem',
+              padding: '1rem',
+              background: '#f8f9fa',
+              borderRadius: '8px'
+            }}>
+              <div style={{
+                fontSize: '0.9rem',
+                color: '#6c757d',
+                marginBottom: '0.5rem'
+              }}>
+                We Accept
+              </div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                fontSize: '1.5rem'
+              }}>
+                💳 🏦 📱
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
