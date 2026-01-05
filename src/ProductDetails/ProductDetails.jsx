@@ -1,11 +1,17 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { ProductContext } from "../context/ProductContext";
-
+import { CartContext } from "../context/CartContext";
 
 export default function ProductDetails() {
   const { selectedProduct, closeProduct } = useContext(ProductContext);
+  const { cart, addToCart } = useContext(CartContext);
+  const navigate = useNavigate();
 
   if (!selectedProduct) return null;
+
+  // Check if product is already in cart
+  const inCart = cart.find((p) => p.id === selectedProduct.id);
 
   return (
     <div
@@ -31,13 +37,9 @@ export default function ProductDetails() {
           />
 
           <div className="space-y-3">
-            <h2 className="text-2xl font-semibold">
-              {selectedProduct.title}
-            </h2>
+            <h2 className="text-2xl font-semibold">{selectedProduct.title}</h2>
 
-            <p className="text-gray-600">
-              {selectedProduct.description}
-            </p>
+            <p className="text-gray-600">{selectedProduct.description}</p>
 
             <p className="text-3xl font-bold text-green-600">
               ₹ {selectedProduct.price}
@@ -47,8 +49,22 @@ export default function ProductDetails() {
               ⭐ {selectedProduct.rating}
             </p>
 
-            <button className="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-              Add to Cart
+            <button
+              className={`mt-3 px-4 py-2 rounded-lg text-white font-medium ${
+                inCart
+                  ? "bg-yellow-500 hover:bg-yellow-600"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+              onClick={() => {
+                if (inCart) {
+                  navigate("/cart"); // go to cart page
+                  closeProduct();
+                } else {
+                  addToCart(selectedProduct); // add to cart
+                }
+              }}
+            >
+              {inCart ? "View Cart" : "Add to Cart"}
             </button>
           </div>
         </div>
