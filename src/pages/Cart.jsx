@@ -2,7 +2,7 @@
 import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { AiOutlineMinus, AiOutlinePlus, AiOutlineDelete, AiOutlineShopping } from "react-icons/ai";
-
+import { Link } from "react-router-dom";
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
   const [quantities, setQuantities] = useState({});
@@ -41,6 +41,7 @@ export default function Cart() {
         }}>
           Add some amazing products to your cart and start shopping!
         </p>
+        <Link to="/">
         <button style={{
           background: 'white',
           color: '#667eea',
@@ -65,8 +66,9 @@ export default function Cart() {
           e.target.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
         }}>
           <AiOutlineShopping size={20} />
-          Continue Shopping
+          Continue Shopping 
         </button>
+        </Link>
       </div>
     );
 
