@@ -4,7 +4,9 @@ import { ProductProvider } from "./context/ProductContext.jsx";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import Home from "./pages/Home.jsx";
-import Products from "./pages/ Products.jsx";
+import Products from "./pages/Products.jsx";
+import ProductDetails from "./components/ProductDetails/ProductDetails.jsx";
+
 
 export default function App() {
   return (
@@ -16,6 +18,7 @@ export default function App() {
           <Route path="/products" element={<Products />} />
         </Routes>
         <Footer />
+        <ProductDetails />
       </Router>
     </ProductProvider>
   );
