@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import { ProductContext } from "../../context/ProductContext";
+import { ProductContext } from "../context/ProductContext";
+
 
 export default function ProductDetails() {
   const { selectedProduct, closeProduct } = useContext(ProductContext);

@@ -11,8 +11,8 @@ export default function ProductCard({ product }) {
       <h3>{product.title}</h3>
       <p>₹ {product.price}</p>
 
-      <button className="btn">
-        <AiOutlineShoppingCart /> Add to Cart
+      <button className="btn ">
+        <AiOutlineShoppingCart />Add to Cart
       </button>
     </div>
   );
