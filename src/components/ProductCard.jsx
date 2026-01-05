@@ -12,7 +12,7 @@ export default function ProductCard({ product }) {
       <p>₹ {product.price}</p>
 
       <button className="btn ">
-        <AiOutlineShoppingCart />Add to Cart
+        Add to Cart
       </button>
     </div>
   );
