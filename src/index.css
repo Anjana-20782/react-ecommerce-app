@@ -19,11 +19,12 @@ body {
   color: white;
   text-decoration: none;
   margin-right: 1rem;
+  
 }
 
 /* Flipkart-style Footer */
 .footer {
-  background: #172337;
+  background: #172137;
   color: #ffffff;
   padding: 3rem 1rem 1rem;
   margin-top: 3rem;
@@ -427,4 +428,31 @@ body {
 
 .btn:hover {
   background: #095a9d;
+}
+
+/* Product Details Page Responsive Layout */
+.product-details-grid {
+  grid-template-columns: 400px 1fr !important;
+}
+
+@media (max-width: 1024px) {
+  .product-details-grid {
+    grid-template-columns: 350px 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-details-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-details-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    padding: 1rem !important;
+  }
 }

@@ -124,24 +124,38 @@ export default function ProductDetails() {
         margin: '0 auto',
         padding: '2rem',
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
+        gridTemplateColumns: '400px 1fr',
         gap: '3rem',
         alignItems: 'start'
-      }}>
+      }}
+      className="product-details-grid"
+      >
 
         {/* Left Column - Images */}
         <div>
           {/* Main Image */}
-          <div style={{
-            background: '#f8f9fa',
-            borderRadius: '16px',
-            padding: '2rem',
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '400px'
-          }}>
+          <div
+            style={{
+              background: '#f8f9fa',
+              borderRadius: '16px',
+              padding: '2rem',
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '400px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = '#f0f0f0';
+              e.currentTarget.style.transform = 'scale(1.02)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = '#f8f9fa';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
             <img
               src={productImages[selectedImage]}
               alt={selectedProduct.title}
@@ -149,7 +163,15 @@ export default function ProductDetails() {
                 maxWidth: '100%',
                 maxHeight: '400px',
                 objectFit: 'contain',
-                borderRadius: '8px'
+                borderRadius: '8px',
+                transition: 'transform 0.4s ease',
+                transformOrigin: 'center center'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'rotate(5deg) scale(1.1)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'rotate(0deg) scale(1)';
               }}
               onError={(e) => {
                 e.target.src = 'https://via.placeholder.com/400x400/f8f9fa/6c757d?text=No+Image';

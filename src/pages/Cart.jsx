@@ -1,7 +1,7 @@
 // src/pages/Cart.jsx
 import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
-import { AiOutlineMinus, AiOutlinePlus, AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineMinus, AiOutlinePlus, AiOutlineDelete, AiOutlineShopping } from "react-icons/ai";
 
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
@@ -10,50 +10,51 @@ export default function Cart() {
   if (cart.length === 0)
     return (
       <div style={{
-        minHeight: '60vh',
+        minHeight: '70vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        margin: '2rem',
         borderRadius: '20px',
-        margin: '2rem auto',
-        maxWidth: '800px',
         color: 'white',
         textAlign: 'center',
         padding: '3rem'
       }}>
-        <div style={{ fontSize: '6rem', marginBottom: '1.5rem' }}>🛒</div>
+        <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🛒</div>
         <h1 style={{
-          fontSize: '2.5rem',
-          fontWeight: '700',
-          marginBottom: '1rem',
-          background: 'linear-gradient(45deg, #ffffff, #f0f0f0)',
+          fontSize: '3rem',
+          fontWeight: '800',
+          margin: '0 0 1rem 0',
+          background: 'linear-gradient(45deg, #ffffff, #e8f4fd)',
           WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent'
+          WebkitTextFillColor: 'transparent',
+          lineHeight: '1.2'
         }}>
           Your Cart is Empty
         </h1>
         <p style={{
           fontSize: '1.2rem',
-          opacity: '0.9',
-          marginBottom: '2rem',
-          maxWidth: '400px'
+          margin: '0 0 2rem 0',
+          opacity: '0.9'
         }}>
-          Looks like you haven't added any items to your cart yet.
-          Start shopping to fill it up with amazing products!
+          Add some amazing products to your cart and start shopping!
         </p>
         <button style={{
           background: 'white',
-          color: '#1e3c72',
+          color: '#667eea',
           border: 'none',
-          padding: '1rem 2rem',
+          padding: '1rem 2.5rem',
           borderRadius: '50px',
           fontSize: '1.1rem',
           fontWeight: '600',
           cursor: 'pointer',
           boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-          transition: 'all 0.3s ease'
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
         }}
         onMouseOver={(e) => {
           e.target.style.transform = 'translateY(-2px)';
@@ -63,14 +64,15 @@ export default function Cart() {
           e.target.style.transform = 'translateY(0)';
           e.target.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
         }}>
-          Start Shopping
+          <AiOutlineShopping size={20} />
+          Continue Shopping
         </button>
       </div>
     );
 
   // Calculate totals
   const subtotal = cart.reduce((sum, item) => sum + item.price * (quantities[item.id] || item.quantity), 0);
-  const shipping = subtotal > 500 ? 0 : 50;
+  const shipping = subtotal > 999 ? 0 : 99;
   const tax = subtotal * 0.18; // 18% GST
   const total = subtotal + shipping + tax;
 
@@ -90,6 +92,8 @@ export default function Cart() {
       padding: '2rem 1rem',
       background: '#f8f9fa'
     }}>
+
+      {/* Header */}
       <div style={{
         background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
         color: 'white',
@@ -97,23 +101,28 @@ export default function Cart() {
         borderRadius: '15px',
         textAlign: 'center',
         marginBottom: '2rem',
-        boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)'
+        boxShadow: '0 8px 32px rgba(30, 60, 114, 0.3)'
       }}>
         <h1 style={{
           fontSize: '2.5rem',
-          fontWeight: '700',
-          margin: '0',
-          background: 'linear-gradient(45deg, #ffffff, #f0f0f0)',
+          fontWeight: '800',
+          margin: '0 0 0.5rem 0',
+          background: 'linear-gradient(45deg, #ffffff, #e8f4fd)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent'
         }}>
           Shopping Cart
         </h1>
-        <p style={{ fontSize: '1.1rem', opacity: '0.9', margin: '0.5rem 0 0 0' }}>
+        <p style={{
+          fontSize: '1.1rem',
+          opacity: '0.9',
+          margin: '0'
+        }}>
           {cart.length} item{cart.length !== 1 ? 's' : ''} in your cart
         </p>
       </div>
 
+      {/* Cart Content */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 350px',
@@ -153,6 +162,7 @@ export default function Cart() {
                   gap: '1.5rem',
                   alignItems: 'center'
                 }}>
+
                   {/* Product Image */}
                   <div style={{
                     position: 'relative',
@@ -175,6 +185,21 @@ export default function Cart() {
                         e.target.src = 'https://via.placeholder.com/100x100/f8f9fa/6c757d?text=No+Image';
                       }}
                     />
+
+                    {/* Discount Badge */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '8px',
+                      left: '8px',
+                      background: 'linear-gradient(135deg, #ff4757, #ff3838)',
+                      color: 'white',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontSize: '0.7rem',
+                      fontWeight: '600'
+                    }}>
+                      {Math.floor(Math.random() * 11) + 15}% OFF
+                    </div>
                   </div>
 
                   {/* Product Details */}
@@ -188,7 +213,8 @@ export default function Cart() {
                       display: '-webkit-box',
                       WebkitLineClamp: '2',
                       WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      height: '2.8rem'
                     }}>
                       {item.title}
                     </h3>
@@ -197,7 +223,8 @@ export default function Cart() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '1rem',
-                      marginBottom: '1rem'
+                      marginBottom: '1rem',
+                      flexWrap: 'wrap'
                     }}>
                       <span style={{
                         fontSize: '1.3rem',
@@ -205,6 +232,14 @@ export default function Cart() {
                         color: '#1e3c72'
                       }}>
                         ₹{item.price.toLocaleString()}
+                      </span>
+
+                      <span style={{
+                        fontSize: '0.9rem',
+                        color: '#6c757d',
+                        textDecoration: 'line-through'
+                      }}>
+                        ₹{Math.round(item.price * 1.2).toLocaleString()}
                       </span>
                     </div>
 
@@ -231,7 +266,7 @@ export default function Cart() {
                         onMouseOver={(e) => e.target.style.background = '#e9ecef'}
                         onMouseOut={(e) => e.target.style.background = '#f8f9fa'}
                       >
-                        <AiOutlineMinus size={14} />
+                        <AiOutlineMinus size={16} />
                       </button>
 
                       <span style={{
@@ -250,7 +285,7 @@ export default function Cart() {
                           border: '1px solid #dee2e6',
                           borderRadius: '8px',
                           width: '32px',
-                          height: '32px',
+                        height: '32px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -260,7 +295,7 @@ export default function Cart() {
                         onMouseOver={(e) => e.target.style.background = '#e9ecef'}
                         onMouseOut={(e) => e.target.style.background = '#f8f9fa'}
                       >
-                        <AiOutlinePlus size={14} />
+                        <AiOutlinePlus size={16} />
                       </button>
                     </div>
                   </div>
@@ -327,6 +362,35 @@ export default function Cart() {
           top: '2rem',
           height: 'fit-content'
         }}>
+
+          {/* Free Shipping Banner */}
+          {subtotal < 999 && (
+            <div style={{
+              background: 'linear-gradient(135deg, #fff3cd, #ffeaa7)',
+              border: '1px solid #ffeaa7',
+              borderRadius: '12px',
+              padding: '1rem',
+              textAlign: 'center',
+              marginBottom: '1.5rem'
+            }}>
+              <div style={{
+                fontSize: '0.9rem',
+                color: '#856404',
+                fontWeight: '600'
+              }}>
+                Add ₹{(999 - subtotal).toLocaleString()} more for FREE shipping!
+              </div>
+              <div style={{
+                width: `${(subtotal / 999) * 100}%`,
+                height: '4px',
+                background: '#ffc107',
+                borderRadius: '2px',
+                marginTop: '0.5rem',
+                transition: 'width 0.3s ease'
+              }}></div>
+            </div>
+          )}
+
           <h2 style={{
             fontSize: '1.5rem',
             fontWeight: '700',
@@ -380,25 +444,11 @@ export default function Cart() {
               alignItems: 'center',
               fontSize: '1.2rem',
               fontWeight: '700',
-              color: '#667eea'
+              color: '#1e3c72'
             }}>
               <span>Total</span>
               <span>₹{total.toFixed(0).toLocaleString()}</span>
             </div>
-
-            {subtotal < 500 && (
-              <div style={{
-                background: '#fff3cd',
-                border: '1px solid #ffeaa7',
-                borderRadius: '8px',
-                padding: '1rem',
-                textAlign: 'center',
-                fontSize: '0.9rem',
-                color: '#856404'
-              }}>
-                Add ₹{(500 - subtotal).toLocaleString()} more for FREE shipping!
-              </div>
-            )}
 
             <button
               style={{
@@ -411,17 +461,17 @@ export default function Cart() {
                 fontWeight: '700',
                 cursor: 'pointer',
                 marginTop: '1rem',
-                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                boxShadow: '0 4px 15px rgba(30, 60, 114, 0.4)',
                 transition: 'all 0.3s ease',
                 width: '100%'
               }}
               onMouseOver={(e) => {
                 e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.6)';
+                e.target.style.boxShadow = '0 8px 25px rgba(30, 60, 114, 0.6)';
               }}
               onMouseOut={(e) => {
                 e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+                e.target.style.boxShadow = '0 4px 15px rgba(30, 60, 114, 0.4)';
               }}
             >
               Proceed to Checkout
@@ -439,15 +489,15 @@ export default function Cart() {
                 color: '#6c757d',
                 marginBottom: '0.5rem'
               }}>
-                We Accept
+                Secure Checkout with
               </div>
               <div style={{
                 display: 'flex',
                 justifyContent: 'center',
                 gap: '0.5rem',
-                fontSize: '1.5rem'
+                fontSize: '1.2rem'
               }}>
-                💳 🏦 📱
+                🔒 💳 🏦 📱
               </div>
             </div>
           </div>
